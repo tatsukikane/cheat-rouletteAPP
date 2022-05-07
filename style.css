@@ -1,0 +1,62 @@
+.header{
+  background-color: #800080;
+}
+.header h1{
+  text-align: center;
+  color: white;
+  font-family: "Arial Black";
+}
+
+.result-header{
+  text-align: center;
+}
+#result{
+  text-align: center;
+}
+
+.btn_area{
+  text-align: center;
+  display: flex;
+  justify-content: space-around;
+}
+
+.reset{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: skyblue;/*背景色*/
+  font-size: 25px;
+  font-family: "Comic Sans MS";
+}
+.start{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: skyblue;/*背景色*/
+  font-size: 25px;
+  font-family: "Comic Sans MS";
+
+}
+.stop{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: skyblue;/*背景色*/
+  font-size: 25px;
+  font-family: "Comic Sans MS";
+}
+
+.secret_area{
+  margin-top: 50px;
+  height: 70px;
+  background-color: #800080;
+}
+.secret_btn{
+  background: transparent;
+  border: 0px none;
+  font-size: 30px;
+}
+
+.hiden_area{
+  display: none;
+}

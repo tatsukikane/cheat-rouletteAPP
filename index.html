@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>cheat-roulette</title>
+</head>
+<body>
+    <!-- <link rel="stylesheet" href="./reset.css"> -->
+    <link rel="stylesheet" href="style.css">
+    <script src="./p5.min.js"></script>
+    <script src="./app.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+
+    <style>
+    .p5Canvas{
+        max-width: 600px;
+        width: 100% !important;
+        height: auto !important;
+    }
+    </style>
+
+    <div class="header"><h1>&#128509;Chug! Chug! Chug!&#128509;</h1></div>
+
+    <div id="canvas"></div>
+    <div class="btn_area">
+        <button type="button" class="reset" id="reset" onclick="reset()">reset</button>
+        <button type="button" class="start" id="start" onclick="start()">start</button>
+        <button type="button" class="stop" id="stop" onclick="stop()" style="display:none;">stop</button>
+
+    </div>
+    <!-- <button type="button" class="reset" id="reset" onclick="reset()">リセット</button>
+    <button type="button" class="start" id="start" onclick="start()">スタート！</button>
+    <button type="button" class="stop" id="stop" onclick="stop()" style="display:none;">ストップ!</button> -->
+
+    <h2 class="result-header">結果</h2>
+    <p id="result">????</p>
+    <style>
+        #result{
+            font-size: 40px;
+            font-weight: bold;
+        }
+    </style>
+
+<div>
+    <h2>【ルーレット設定】</h2>
+    <div>
+        <h3>メンバーの登録と割合の設定をしましょう!</h3>
+        <!-- <button type="button" class="add">追加</button> -->
+        <table id="table">
+            <tr><th>色</th><th>メンバー</th><th>割合</th><th>確率</th><th>削除</th></tr>
+            <tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="メンバーA"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>
+            <tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="メンバーB"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>
+            <tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="メンバーC"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>
+            <tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="メンバーD"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>
+            <tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="メンバーE"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>
+            <tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="メンバーF"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>
+        </table>
+        <button type="button" class="add">追加</button>
+    </div>
+</div>
+<style>
+.color-indicator{
+    width: 10px;
+    height: 10px;
+}
+</style>
+
+
+
+<div class="secret_area" id="secret_area">
+    <button class="secret_btn" id="secret_btn">&#127853;</button>
+    <div class="hiden_area" id="hiden_area">
+        <input class="secret_input" id="secret_input"> <button class="secret_submit" id="secret_submit">登録</button>
+        <button id="hiden_btn">入力欄を隠す</button>
+    </div>
+</div>
+
+<script>
+    //確率の計算
+    function recalculate(){
+        var ratioSumJs = 0;
+        //入力値を取得 文字列に変換
+        $('.ratio').each(function(){
+            ratioSumJs += $(this).val()-0;
+        });
+        $(".item").each(function(){
+            var probability = ($(this).find(".ratio").first().val()-0) / ratioSumJs;
+            probability*=100;
+            probability = probability.toFixed(3);
+            $(this).children(".probability").first().html(probability+"%");
+        });
+    }
+
+    //項目の追加と追加後に自動計算
+    $('.add').click(function(){
+      var add = '<tr class="item"><td><div class="color-indicator" style="background-color:#000000;"></div></td><td><input type="text" class="name" value="項目"></td><td><input type="number" class="ratio" value="1"></td><td class="probability"></td><td><button type="button" onclick="rmItem(this)">削除</button></td></tr>';
+      $('#table').append(add);
+      recalculate();
+      if(mode==Mode.waiting){
+        dataFetch();
+      }
+    });
+
+    //項目の削除と再計算
+    function rmItem(e){
+    if($('.ratio').length>2){
+        $(e).parent().parent().remove(); //親の親が<tr>
+        recalculate();
+        if(mode==Mode.waiting){
+          dataFetch();
+        }
+        
+    }
+
+    //入力値に変更があった際に再計算
+    $('#table').on('change', '.ratio', function(){
+      recalculate();
+      if(mode==Mode.waiting){
+          dataFetch();
+      }
+    });
+}
+
+let secret_name= "";
+//シークレットボタンの表示
+$('#secret_btn').on('click', function(){
+    // $("#secret_area").append('<input class="secret_input" id="secret_input"> <button class="secret_submit" id="secret_submit">登録</button>')
+    $("#hiden_area").show();
+    //シークレットサブミットボタンが押された時のイベント
+    $('#secret_submit').on('click', function(){
+        secret_name = $("#secret_input").val();
+        // alert(secret_name);
+    });
+    //下記 強制的にテキストだけ変更する方法 p5js上で成功したので不要
+    // $('#stop').on('click', function(){
+    //     setTimeout(function(){
+    //       $("#result").text(secret_name);
+    //     },1832);
+    // })
+//     setTimeout(function(){
+//      $('#result"').text("へんか！");
+// },1000);
+});
+$("#hiden_btn").on("click", function(){
+    $("#hiden_area").hide();
+})
+
+
+</script>
+
+
+</body>
+</html>
